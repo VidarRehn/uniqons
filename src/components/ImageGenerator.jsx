@@ -10,24 +10,27 @@ const ImageGenerator = () => {
     const [imageUrl, setImageUrl] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         const data = {
-          model: 'image-alpha-001',
-          prompt: prompt,
-          size: '512x512',
-          response_format: 'url'
-        };
+            model: 'image-alpha-001',
+            // prompt: prompt,
+            size: '512x512',
+            response_format: 'url',
+            image: image
+        }
         const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+            // 'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${apiKey}`
         };
-        const response = await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers });
+        // const response = await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers });
+        const response = await axios.post('https://api.openai.com/v1/images/variations', data, { headers: headers });
         console.log(response)
         setImageUrl(response.data.data[0].url);
     }
 
-    function handleImageChange(e) {
-        setImage(e.target.files[0]);
+    const handleImageChange = async (e) => {
+        setImage(e.target.files[0])
     }
 
     return (
