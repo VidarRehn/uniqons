@@ -13,24 +13,29 @@ const ImageGenerator = () => {
         e.preventDefault()
         const data = {
             model: 'image-alpha-001',
-            // prompt: prompt,
-            size: '512x512',
+            prompt: prompt,
+            n: 2,
+            size: '256x256',
             response_format: 'url',
-            image: image
+            // image: image
         }
         const headers = {
-            // 'Content-Type': 'application/json',
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${apiKey}`
         };
-        // const response = await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers });
-        const response = await axios.post('https://api.openai.com/v1/images/variations', data, { headers: headers });
-        console.log(response)
-        setImageUrl(response.data.data[0].url);
+        const response = await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers });
+        // const response = await axios.post('https://api.openai.com/v1/images/variations', data, { headers: headers });
+        setImageUrl(response.data.data)
+        // setImageUrl(response.data.data)
     }
 
     const handleImageChange = async (e) => {
         setImage(e.target.files[0])
+    }
+
+    const returnActualPrompt = (inputPrompt) => {
+        setPrompt(`an icon of ${inputPrompt} in a light blue metallic iridescent material, 3D render isometric perspective on dark background`)
     }
 
     return (
@@ -38,17 +43,19 @@ const ImageGenerator = () => {
             <form onSubmit={handleSubmit}>
                 <label>
                     Prompt:
-                    <input type="text" value={prompt} onChange={e => setPrompt(e.target.value)} />
+                    <input type="text" onChange={e => returnActualPrompt(e.target.value)} />
                 </label>
+
+                {/* image input needs to be exactly square, PNG-format and not larger than 4mb */}
                 <label>
                     Image:
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                 </label>
                 <button type="submit">Generate Image</button>
             </form>
-            {imageUrl && (
-            <img src={imageUrl} alt="Generated image" />
-            )}
+            {imageUrl && imageUrl.map(img => (
+            <img src={img.url} alt="Generated image" />
+            ))}
         </div>
     )
 }
