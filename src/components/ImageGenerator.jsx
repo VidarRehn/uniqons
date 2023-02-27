@@ -35,7 +35,7 @@ const ImageGenerator = () => {
     }
 
     const returnActualPrompt = (inputPrompt) => {
-        setPrompt(`an icon of ${inputPrompt} in a light blue metallic iridescent material, 3D render isometric perspective on dark background`)
+        setPrompt(`a single icon of ${inputPrompt} in black on white background. Solid, flat, geometric and symetrical vector art. No text`)
     }
 
     return (
