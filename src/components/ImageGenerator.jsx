@@ -2,6 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { Potrace } from "potrace"
 import { apiKey } from "../config/openAi"
+import CodeContainer from "./CodeContainer"
 
 const ImageGenerator = () => {
     
@@ -10,14 +11,17 @@ const ImageGenerator = () => {
     const [croppedImage, setCroppedImage] = useState()
     const [svgCreated, setSvgCreated] = useState(false)
     const [svgImage, setSvgImage] = useState()
+    const [codeString, setCodeString] = useState()
     const container = document.querySelector('.svg')
+    let svg
 
     const trace = new Potrace()
 
     useEffect(() => {
         if (imageUrl) {
             trace.loadImage(imageUrl[0].url, () => {
-                let svg = trace.getSVG()
+                svg = trace.getSVG()
+                setCodeString(svg)
                 container.innerHTML = svg
                 setSvgCreated(true)
             })
@@ -26,11 +30,7 @@ const ImageGenerator = () => {
 
     useEffect(() => {
         if (svgCreated){
-            console.log(container)
-            let svg = document.querySelector('svg')
-            let path = document.querySelectorAll('svg path')
-            console.log(svg)
-            console.log(path)
+
         }
     }, [svgCreated])
 
@@ -72,6 +72,11 @@ const ImageGenerator = () => {
                 )}
             </div>
             <div className="svg"></div>
+            <div className="code-container">
+            {svgCreated && (
+                <CodeContainer code={codeString} />
+            )}
+            </div>
         </div>
     )
 }
