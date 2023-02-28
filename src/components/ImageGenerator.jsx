@@ -5,6 +5,7 @@ import AppContext from '../context/AppContext'
 import { useEffect, useState } from "react"
 import { Potrace } from "potrace"
 import { apiKey } from "../config/openAi"
+import TestIcon from './TestIcon'
 import CodeContainer from "./CodeContainer"
 
 const ImageGenerator = () => {
@@ -15,6 +16,7 @@ const ImageGenerator = () => {
     const [svgCreated, setSvgCreated] = useState(false)
     const [chosenImage, setChosenImage] = useState()
     const [codeString, setCodeString] = useState()
+    const [amendedCodeString, setAmendedCodeString] = useState()
     const container = document.querySelector('.svg')
     let svg
 
@@ -30,6 +32,23 @@ const ImageGenerator = () => {
             })
         }        
     }, [imageUrl])
+
+    // useEffect(() => {
+    //     if (codeString) {
+    //         let array = codeString.split(' ')
+    //         let fill = array.map(string => {
+    //             if (string.includes('fill') && string.includes('black')){
+    //                 return 'fill={color}'
+    //             } else if (string.includes('width')) {
+    //                 return ''
+    //             } else if (string.includes('height')) {
+    //                 return 'height={size}'
+    //             } else return string
+    //         })
+    //         let amendedString = fill.join(' ')
+    //         setAmendedCodeString(amendedString)
+    //     }
+    // }, [codeString])
 
     const generateImage = async (e) => {
         e.preventDefault()
@@ -58,7 +77,6 @@ const ImageGenerator = () => {
         trace.loadImage(image, () => {
             svg = trace.getSVG()
             setCodeString(svg)
-            container.innerHTML = svg
             setSvgCreated(true)
         })
     }
@@ -70,25 +88,29 @@ const ImageGenerator = () => {
                 <input type="text" onChange={(e) => returnActualPrompt(e.target.value)} placeholder="Write you short prompt here" id="prompt-input" />
                 <button type="submit">Generate Image</button>
             </Form>
+
             {imageUrl && (
             <>    
             <ImagesContainer>
-                {imageUrl && imageUrl.map((img, i) => (
-                    <label htmlFor={`image-${i}`} key={i} className="image-and-checkbox">
-                        <img src={img.url} />
-                        <input id={`image-${i}`} type="radio" name="chosen-image" onChange={(e) => setChosenImage(e.target.previousSibling.src)} />
-                    </label>
-                ))}
+            {imageUrl && imageUrl.map((img, i) => (
+                <ImageAndCheckbox htmlFor={`image-${i}`} key={i}>
+                    <img src={img.url} />
+                    <input id={`image-${i}`} type="radio" name="chosen-image" onChange={(e) => setChosenImage(e.target.previousSibling.src)} />
+                </ImageAndCheckbox>
+            ))}
             </ImagesContainer>
             <button disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>Create SVG</button>
             </>
             )}
-            <div className="svg"></div>
-            {svgCreated && (
-            <div className="code-container">
+
+            {codeString && <TestIcon code={codeString}/>}
+
+            {/* {svgCreated && (
+            <div>
                 <CodeContainer code={codeString} />
             </div>
-            )}
+            )} */}
+
         </Container>
     )
 }
@@ -118,6 +140,24 @@ const ImagesContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
+`
+const ImageAndCheckbox = styled.label`
+    height: 120px;
+    width: 120px;
+    position: relative;
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+
+    input {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        right: 16px;
+        top: 16px;
+    }
 `
 
 export default ImageGenerator
