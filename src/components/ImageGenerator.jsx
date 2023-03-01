@@ -58,9 +58,11 @@ const ImageGenerator = () => {
         e.preventDefault()
         setError(null)
         setImageUrl(null)
-        setCodeString(null)
-        let prompt = `single icon of ${inputPrompt} in black on white background`
+        setSvgCreated(false)
         setLoader(true)
+
+        let prompt = `single icon of ${inputPrompt} in black on white background`
+
         const data = {
             model: 'image-alpha-001',
             prompt: prompt,
@@ -89,6 +91,39 @@ const ImageGenerator = () => {
             setCodeString(svg)
             setSvgCreated(true)
         })
+    }
+
+    const getVariations = async (e) => {
+        e.preventDefault()
+
+        let response = await fetch(chosenImage)
+        let blob = await response.blob()
+        let file = new File([blob], 'image.png')
+
+        setError(null)
+        setSvgCreated(false)
+        setLoader(true)
+
+        const data = {
+            model: 'image-alpha-001',
+            image: file,
+            n: 4,
+            size: '256x256',
+            response_format: 'url',
+        }
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${apiKey}`
+        };
+        await axios.post('https://api.openai.com/v1/images/variations', data, { headers: headers })
+        .then(res => {
+            setImageUrl(res.data.data)
+        })
+        .catch(err => {
+            setError(err.response.data.error.message)
+        })
+        setLoader(false)
+
     }
 
     return (
@@ -121,7 +156,7 @@ const ImageGenerator = () => {
                     <TracePen size={18} color={'white'} />
                     <span>Trace SVG</span>
                 </Button>
-                <Button disabled={!chosenImage}>
+                <Button disabled={!chosenImage} onClick={(e) => getVariations(e)}>
                     <StackedImages size={24} color={'black'} />
                     <span>Get variations</span>
                 </Button>
@@ -129,7 +164,7 @@ const ImageGenerator = () => {
             </>
             )}
 
-            {codeString && (
+            {svgCreated && (
             <Icon code={codeString} prompt={inputPrompt}/>
             )}
 
