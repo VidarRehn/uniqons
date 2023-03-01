@@ -65,7 +65,7 @@ const Icon = ({code, prompt}) => {
                 <div className="generated-icon">{parse(code, attributeOptions)}</div>
                 <Inputs>
                     <InputAndLabel>
-                        <label htmlFor="color-input">Change color</label>
+                        <label htmlFor="color-input">Color</label>
                         <input onChange={(e) => setColor(e.target.value)} type="color" id="color-input" />
                     </InputAndLabel>
                     {/* <InputAndLabel>
@@ -77,11 +77,11 @@ const Icon = ({code, prompt}) => {
             <RowContainer>
                 <Button style={{border: `3px solid ${color}`, color: color}}>
                     <div>{parse(code, buttonOneOptions)}</div>
-                    <span>{prompt}</span>
+                    <span>Button</span>
                 </Button>
                 <Button style={{border: `3px solid ${color}`, backgroundColor: color}}>
                     <div>{parse(code, buttonTwoOptions)}</div>
-                    <span>{prompt}</span>
+                    <span>Button</span>
                 </Button>
             </RowContainer>
         </Container>
@@ -109,7 +109,7 @@ const Button = styled.button`
     border: none;
     background-color: transparent;
     color: white;
-    padding: 4px 24px;
+    padding: 8px 16px;
     border-radius: 12px;
     
     span {

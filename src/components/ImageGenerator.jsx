@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, {css} from "styled-components"
 import axios from "axios"
 import { useContext } from 'react'
 import AppContext from '../context/AppContext'
@@ -7,6 +7,9 @@ import { Potrace } from "potrace"
 import { apiKey } from "../config/openAi"
 import Icon from './Icon'
 import CodeContainer from "./CodeContainer"
+import Pen from "../assets/Pen"
+import TracePen from "../assets/TracePen"
+import StackedImages from "../assets/StackedImages"
 
 const ImageGenerator = () => {
     
@@ -14,6 +17,7 @@ const ImageGenerator = () => {
     const [inputPrompt, setInputPrompt] = useState()
     const [imageUrl, setImageUrl] = useState();
     const [svgCreated, setSvgCreated] = useState(false)
+    const [error, setError] = useState()
     const [chosenImage, setChosenImage] = useState()
     const [codeString, setCodeString] = useState()
     const [amendedCodeString, setAmendedCodeString] = useState()
@@ -52,12 +56,15 @@ const ImageGenerator = () => {
 
     const generateImage = async (e) => {
         e.preventDefault()
+        setError(null)
+        setImageUrl(null)
+        setCodeString(null)
         let prompt = `single icon of ${inputPrompt} in black on white background`
         setLoader(true)
         const data = {
             model: 'image-alpha-001',
             prompt: prompt,
-            n: 3,
+            n: 4,
             size: '256x256',
             response_format: 'url',
         }
@@ -65,9 +72,15 @@ const ImageGenerator = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
         };
-        const response = await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers });
-        setImageUrl(response.data.data)
+        await axios.post('https://api.openai.com/v1/images/generations', data, { headers: headers })
+        .then(res => {
+            setImageUrl(res.data.data)
+        })
+        .catch(err => {
+            setError(err.response.data.error.message)
+        })
         setLoader(false)
+        e.target.reset()
     }
 
     const traceSvg = async (image) => {
@@ -82,8 +95,11 @@ const ImageGenerator = () => {
         <Container>
             <Form onSubmit={(e) => generateImage(e)}>
                 <label htmlFor="prompt-input">Prompt</label>
-                <input type="text" onChange={(e) => setInputPrompt(e.target.value)} placeholder="Write you short prompt here" id="prompt-input" />
-                <button type="submit">Generate Image</button>
+                <PromptInput type="text" onChange={(e) => setInputPrompt(e.target.value)} placeholder="What do you want your icon to portray?" id="prompt-input" />
+                <DrawButton type="submit">
+                    <Pen size={20} color={'white'} />
+                    <span>Draw</span>
+                </DrawButton>
             </Form>
 
             {imageUrl && (
@@ -96,11 +112,26 @@ const ImageGenerator = () => {
                 </ImageAndCheckbox>
             ))}
             </ImagesContainer>
-            <button disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>Create SVG</button>
+
+            {error && <p>{error}</p>}
+
+            <ActionsContainer>
+                <p>Click on an image above that you like then:</p>
+                <Button primary disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>
+                    <TracePen size={18} color={'white'} />
+                    <span>Trace SVG</span>
+                </Button>
+                <Button disabled={!chosenImage}>
+                    <StackedImages size={24} color={'black'} />
+                    <span>Get variations</span>
+                </Button>
+            </ActionsContainer>
             </>
             )}
 
-            {codeString && <Icon code={codeString} prompt={inputPrompt}/>}
+            {codeString && (
+            <Icon code={codeString} prompt={inputPrompt}/>
+            )}
 
             {/* {svgCreated && (
             <div>
@@ -113,24 +144,47 @@ const ImageGenerator = () => {
 }
 
 const Container = styled.section`
+    width: 528px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
 `
 const Form = styled.form`
+    width: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 16px;
 
     label {
         display: none;
     }
+`
+const PromptInput = styled.input`
+    width: 100%;
+    height: 40px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #ebebeb;
+    border-radius: 8px 0px 0px 8px;
 
-    input, button {
-        width: 260px;
-        padding: 8px 16px;
+    &::placeholder {
+        opacity: .7;
+    }
+`
+const DrawButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    height: 40px;
+    padding: 8px 16px;
+    border: none;
+    color: white;
+    background-color: black;
+    border-radius: 0px 8px 8px 0px;
+
+    svg {
+        transform: rotate(45deg);
     }
 `
 const ImagesContainer = styled.div`
@@ -155,6 +209,28 @@ const ImageAndCheckbox = styled.label`
         right: 16px;
         top: 16px;
     }
+`
+const ActionsContainer = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+`
+const Button = styled.button`
+    height: 40px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    border-radius: 8px;
+    white-space: nowrap;
+    background-color: transparent;
+
+    ${props => props.primary && css`
+        background: black;
+        color: white;
+    `}
 `
 
 export default ImageGenerator
