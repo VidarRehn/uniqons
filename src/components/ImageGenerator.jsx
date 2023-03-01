@@ -5,13 +5,13 @@ import AppContext from '../context/AppContext'
 import { useEffect, useState } from "react"
 import { Potrace } from "potrace"
 import { apiKey } from "../config/openAi"
-import TestIcon from './TestIcon'
+import Icon from './Icon'
 import CodeContainer from "./CodeContainer"
 
 const ImageGenerator = () => {
     
     const {setLoader} = useContext(AppContext)
-    const [prompt, setPrompt] = useState();
+    const [inputPrompt, setInputPrompt] = useState()
     const [imageUrl, setImageUrl] = useState();
     const [svgCreated, setSvgCreated] = useState(false)
     const [chosenImage, setChosenImage] = useState()
@@ -52,6 +52,7 @@ const ImageGenerator = () => {
 
     const generateImage = async (e) => {
         e.preventDefault()
+        let prompt = `single icon of ${inputPrompt} in black on white background`
         setLoader(true)
         const data = {
             model: 'image-alpha-001',
@@ -69,10 +70,6 @@ const ImageGenerator = () => {
         setLoader(false)
     }
 
-    const returnActualPrompt = (inputPrompt) => {
-        setPrompt(`a single icon of ${inputPrompt} in black on white background, centered in middle. Minimalistic, flat geometric vector art.`)
-    }
-
     const traceSvg = async (image) => {
         trace.loadImage(image, () => {
             svg = trace.getSVG()
@@ -85,7 +82,7 @@ const ImageGenerator = () => {
         <Container>
             <Form onSubmit={(e) => generateImage(e)}>
                 <label htmlFor="prompt-input">Prompt</label>
-                <input type="text" onChange={(e) => returnActualPrompt(e.target.value)} placeholder="Write you short prompt here" id="prompt-input" />
+                <input type="text" onChange={(e) => setInputPrompt(e.target.value)} placeholder="Write you short prompt here" id="prompt-input" />
                 <button type="submit">Generate Image</button>
             </Form>
 
@@ -103,7 +100,7 @@ const ImageGenerator = () => {
             </>
             )}
 
-            {codeString && <TestIcon code={codeString}/>}
+            {codeString && <Icon code={codeString} prompt={inputPrompt}/>}
 
             {/* {svgCreated && (
             <div>
