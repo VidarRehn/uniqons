@@ -5,7 +5,7 @@ import ClipBoard from "../assets/Clipboard"
 import ReactIcon from "../assets/ReactIcon"
 import { ActionButton, SectionContainer } from "../styles/styled-components"
 
-const Icon = ({code}) => {
+const Icon = ({code, prompt}) => {
 
     const [color, setColor] = useState('black')
     const [componentDidMount, setComponentDidMount] = useState(false)
@@ -41,6 +41,30 @@ const Icon = ({code}) => {
         navigator.clipboard.writeText(element)
     }
 
+    const copyReactComponent = () => {
+        const element = document.querySelector('.generated-icon').innerHTML
+        let arrayElement = element.split(' ')
+        const openingSeq = `const ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon = ({size,color}) =>\n{ return (`
+        const endSeq = `)\n}\n export default ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon`
+        let amendedArray = arrayElement.map(string => {
+            if (string.includes('xmlns')){
+                return ''
+            } else if(string.includes('width')) {
+                return 'width={size}'
+            } else if(string.includes('height')) {
+                return 'height={size}'
+            } else if(string.includes('fill=')) {
+                return 'fill={color}'
+            } else if(string.includes('fill-rule')) {
+                return 'fillRule=\"evenodd\"></path>\n</svg>'
+            } else return string
+        })
+        amendedArray.unshift(openingSeq)
+        amendedArray.push(endSeq)
+        let newCodeString = amendedArray.join(' ')
+        navigator.clipboard.writeText(newCodeString)
+    }
+
     return (
         <SectionContainer>
             <InnerContainer>
@@ -56,9 +80,9 @@ const Icon = ({code}) => {
                         <ClipBoard size={18} />
                         <span>Copy SVG</span>
                     </ActionButton>
-                    <ActionButton>
+                    <ActionButton onClick={() => copyReactComponent()}>
                         <ReactIcon size={18} />
-                        <span>Copy React comp.</span>
+                        <span>Copy React component</span>
                     </ActionButton>
                 </ActionButtons>
             </InnerContainer>
