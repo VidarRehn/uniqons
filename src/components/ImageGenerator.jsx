@@ -4,9 +4,9 @@ import { useContext, useState } from 'react'
 import AppContext from '../context/AppContext'
 import { apiKey } from "../config/openAi"
 import Icon from './Icon'
-import CodeContainer from "./CodeContainer"
 import Pen from "../assets/Pen"
 import GeneratedImages from "./GeneratedImages"
+import { colors } from "../styles/partials"
 
 const ImageGenerator = () => {
     
@@ -16,7 +16,6 @@ const ImageGenerator = () => {
     const [svgCreated, setSvgCreated] = useState(false)
     const [error, setError] = useState()
     const [codeString, setCodeString] = useState()
-    const [amendedCodeString, setAmendedCodeString] = useState()
 
     const generateImage = async (e) => {
         e.preventDefault()
@@ -100,7 +99,7 @@ const PromptInput = styled.input`
     height: 40px;
     padding: 8px 16px;
     border: none;
-    background-color: #ebebeb;
+    background-color: ${colors.lightBackground};
     border-radius: 8px 0px 0px 8px;
 
     &::placeholder {
@@ -116,7 +115,7 @@ const DrawButton = styled.button`
     padding: 8px 16px;
     border: none;
     color: white;
-    background-color: black;
+    background-color: ${colors.mainAction};
     border-radius: 0px 8px 8px 0px;
 
     svg {

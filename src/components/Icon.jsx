@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react"
-import styled, {css} from "styled-components"
+import styled from "styled-components"
 import parse from 'html-react-parser'
 import ClipBoard from "../assets/Clipboard"
 import ReactIcon from "../assets/ReactIcon"
+import { ActionButton, SectionContainer } from "../styles/styled-components"
 
-const Icon = ({code, prompt}) => {
+const Icon = ({code}) => {
 
     const [color, setColor] = useState('black')
-    const [size, setSize] = useState(120)
     const [componentDidMount, setComponentDidMount] = useState(false)
-    const [aspectRatio, setAspectRatio] = useState()
     const [viewBox, setViewBox] = useState('0 0 256 256')
 
     useEffect(() => {
@@ -28,8 +27,8 @@ const Icon = ({code, prompt}) => {
     const attributeOptions = {
         replace: domNode => {
             if (domNode.name === 'svg'){
-                domNode.attribs.width = size
-                domNode.attribs.height = size
+                domNode.attribs.width = 120
+                domNode.attribs.height = 120
                 domNode.attribs.viewBox = viewBox
             } else if (domNode.name === 'path'){
                 domNode.attribs.fill = color
@@ -39,12 +38,11 @@ const Icon = ({code, prompt}) => {
 
     const copyToClipboard = () => {
         let element = document.querySelector('.generated-icon').innerHTML
-        console.log(element)
         navigator.clipboard.writeText(element)
     }
 
     return (
-        <Container>
+        <SectionContainer>
             <InnerContainer>
                 <SvgIconContainer>
                     <div className="generated-icon">{parse(code, attributeOptions)}</div>
@@ -54,34 +52,25 @@ const Icon = ({code, prompt}) => {
                     </InputAndLabel>
                 </SvgIconContainer>
                 <ActionButtons>
-                    <Button primary onClick={() => {copyToClipboard()}}>
-                        <ClipBoard size={18} color={'white'} />
+                    <ActionButton primary onClick={() => {copyToClipboard()}}>
+                        <ClipBoard size={18} />
                         <span>Copy SVG</span>
-                    </Button>
-                    <Button>
-                        <ReactIcon size={18} color={'black'} />
+                    </ActionButton>
+                    <ActionButton>
+                        <ReactIcon size={18} />
                         <span>Copy React comp.</span>
-                    </Button>
+                    </ActionButton>
                 </ActionButtons>
             </InnerContainer>
-        </Container>
+        </SectionContainer>
     )
 }
 
-const Container = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: #f6f6f6;
-    padding: 16px;
-    border-radius: 12px;
-    gap: 24px;
-`
 const InnerContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
-    gap: 48px;
+    gap: 24px;
 `
 const InputAndLabel = styled.div`
     display: flex;
@@ -101,22 +90,5 @@ const ActionButtons = styled.div`
     align-items: center;
     gap: 16px;
 `
-const Button = styled.button`
-    height: 40px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    border-radius: 8px;
-    white-space: nowrap;
-    background-color: white;
-
-    ${props => props.primary && css`
-        background: black;
-        color: white;
-    `}
-`
-
 
 export default Icon

@@ -6,6 +6,7 @@ import { Potrace } from "potrace"
 import { apiKey } from '../config/openAi'
 import TracePen from "../assets/TracePen"
 import StackedImages from "../assets/StackedImages"
+import { ActionButton, SectionContainer } from '../styles/styled-components'
 
 const GeneratedImages = ({
     imagesArray,
@@ -63,7 +64,7 @@ const GeneratedImages = ({
     }
 
     return (
-        <Container>
+        <SectionContainer>
             <ImagesContainer>
             {imagesArray.map((img, i) => (
                 <ImageAndCheckbox htmlFor={`image-${i}`} key={i}>
@@ -77,27 +78,19 @@ const GeneratedImages = ({
 
             <ActionsContainer>
                 <p>Click on an image above that you like then:</p>
-                <Button primary disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>
-                    <TracePen size={18} color={'white'} />
+                <ActionButton primary disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>
+                    <TracePen size={18} />
                     <span>Trace SVG</span>
-                </Button>
-                <Button disabled={!chosenImage} onClick={(e) => getVariations(e)}>
-                    <StackedImages size={24} color={'black'} />
+                </ActionButton>
+                <ActionButton disabled={!chosenImage} onClick={(e) => getVariations(e)}>
+                    <StackedImages size={24} />
                     <span>Get variations</span>
-                </Button>
+                </ActionButton>
             </ActionsContainer>
-        </Container>
+        </SectionContainer>
     )
 }
 
-const Container = styled.div`
-    background-color: #f6f6f6;
-    padding: 16px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-`
 const ImagesContainer = styled.div`
     display: flex;
     align-items: center;
@@ -126,22 +119,6 @@ const ActionsContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
-`
-const Button = styled.button`
-    height: 40px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    border-radius: 8px;
-    white-space: nowrap;
-    background-color: white;
-
-    ${props => props.primary && css`
-        background: black;
-        color: white;
-    `}
 `
 
 export default GeneratedImages
