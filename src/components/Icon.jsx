@@ -61,20 +61,17 @@ const Icon = ({code, prompt}) => {
 
     return (
         <Container>
-            <RowContainer>
+            <ColumnContainer>
                 <div className="generated-icon">{parse(code, attributeOptions)}</div>
                 <Inputs>
                     <InputAndLabel>
-                        <label htmlFor="color-input">Color</label>
+                        <label htmlFor="color-input">See in another color</label>
                         <input onChange={(e) => setColor(e.target.value)} type="color" id="color-input" />
                     </InputAndLabel>
-                    {/* <InputAndLabel>
-                        <label htmlFor="size-input">Change size (px)</label>
-                        <input defaultValue={size} onChange={(e) => setSize(e.target.value)} type="number" id="size-input" />
-                    </InputAndLabel>       */}
                 </Inputs>
-            </RowContainer>
-            <RowContainer>
+            </ColumnContainer>
+            <ColumnContainer>
+                <p>See how your icon would look inside a button</p>
                 <Button style={{border: `3px solid ${color}`, color: color}}>
                     <div>{parse(code, buttonOneOptions)}</div>
                     <span>Button</span>
@@ -83,14 +80,15 @@ const Icon = ({code, prompt}) => {
                     <div>{parse(code, buttonTwoOptions)}</div>
                     <span>Button</span>
                 </Button>
-            </RowContainer>
+            </ColumnContainer>
         </Container>
     )
 }
 
-const Container = styled.section`
+const Container = styled.div`
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 24px;
 `
@@ -101,6 +99,8 @@ const Inputs = styled.div`
 const InputAndLabel = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 8px;
 `
 const Button = styled.button`
     display: flex;
@@ -111,14 +111,16 @@ const Button = styled.button`
     color: white;
     padding: 8px 16px;
     border-radius: 12px;
+    cursor: auto;
     
     span {
         font-weight: bold;
     }
 `
-const RowContainer = styled.div`
+const ColumnContainer = styled.div`
     display: flex;
     align-items: center;
+    flex-direction: column;
     gap: 16px;
 `
 

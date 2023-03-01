@@ -21,7 +21,6 @@ const ImageGenerator = () => {
     const [chosenImage, setChosenImage] = useState()
     const [codeString, setCodeString] = useState()
     const [amendedCodeString, setAmendedCodeString] = useState()
-    const container = document.querySelector('.svg')
     let svg
 
     const trace = new Potrace()
@@ -31,7 +30,6 @@ const ImageGenerator = () => {
             trace.loadImage(chosenImage, () => {
                 svg = trace.getSVG()
                 setCodeString(svg)
-                container.innerHTML = svg
                 setSvgCreated(true)
             })
         }        
@@ -178,7 +176,7 @@ const ImageGenerator = () => {
     )
 }
 
-const Container = styled.section`
+const Container = styled.main`
     width: 528px;
     display: flex;
     flex-direction: column;

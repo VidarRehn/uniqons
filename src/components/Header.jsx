@@ -5,7 +5,7 @@ const Header = () => {
     return (
         <div>
         <Title>uniqons</Title>
-        <Subtitle>create unique SVG-icons for your website</Subtitle>
+        <Subtitle>create unique SVG-icons with DALL-E for your website</Subtitle>
         </div>
     )
 }
