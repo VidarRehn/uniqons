@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import styled, {css} from "styled-components"
 import parse from 'html-react-parser'
+import ClipBoard from "../assets/Clipboard"
+import ReactIcon from "../assets/ReactIcon"
 
 const Icon = ({code, prompt}) => {
 
     const [color, setColor] = useState('black')
-    const [size, setSize] = useState(150)
+    const [size, setSize] = useState(120)
     const [componentDidMount, setComponentDidMount] = useState(false)
     const [aspectRatio, setAspectRatio] = useState()
     const [viewBox, setViewBox] = useState('0 0 256 256')
@@ -35,52 +37,33 @@ const Icon = ({code, prompt}) => {
         },
     }
 
-    const buttonOneOptions = {
-        replace: domNode => {
-            if (domNode.name === 'svg'){
-                domNode.attribs.width = 30
-                domNode.attribs.height = 30
-                domNode.attribs.viewBox = viewBox
-            } else if (domNode.name === 'path'){
-                domNode.attribs.fill = color
-            }
-        }
-    }
-
-    const buttonTwoOptions = {
-        replace: domNode => {
-            if (domNode.name === 'svg'){
-                domNode.attribs.width = 30
-                domNode.attribs.height = 30
-                domNode.attribs.viewBox = viewBox
-            } else if (domNode.name === 'path'){
-                domNode.attribs.fill = 'white'
-            }
-        }
+    const copyToClipboard = () => {
+        let element = document.querySelector('.generated-icon').innerHTML
+        console.log(element)
+        navigator.clipboard.writeText(element)
     }
 
     return (
         <Container>
-            <ColumnContainer>
-                <div className="generated-icon">{parse(code, attributeOptions)}</div>
-                <Inputs>
+            <InnerContainer>
+                <SvgIconContainer>
+                    <div className="generated-icon">{parse(code, attributeOptions)}</div>
                     <InputAndLabel>
                         <label htmlFor="color-input">See in another color</label>
                         <input onChange={(e) => setColor(e.target.value)} type="color" id="color-input" />
                     </InputAndLabel>
-                </Inputs>
-            </ColumnContainer>
-            <ColumnContainer>
-                <p>See how your icon would look inside a button</p>
-                <Button style={{border: `3px solid ${color}`, color: color}}>
-                    <div>{parse(code, buttonOneOptions)}</div>
-                    <span>Button</span>
-                </Button>
-                <Button style={{border: `3px solid ${color}`, backgroundColor: color}}>
-                    <div>{parse(code, buttonTwoOptions)}</div>
-                    <span>Button</span>
-                </Button>
-            </ColumnContainer>
+                </SvgIconContainer>
+                <ActionButtons>
+                    <Button primary onClick={() => {copyToClipboard()}}>
+                        <ClipBoard size={18} color={'white'} />
+                        <span>Copy SVG</span>
+                    </Button>
+                    <Button>
+                        <ReactIcon size={18} color={'black'} />
+                        <span>Copy React comp.</span>
+                    </Button>
+                </ActionButtons>
+            </InnerContainer>
         </Container>
     )
 }
@@ -88,13 +71,17 @@ const Icon = ({code, prompt}) => {
 const Container = styled.div`
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    background-color: #f6f6f6;
+    padding: 16px;
+    border-radius: 12px;
     gap: 24px;
 `
-const Inputs = styled.div`
+const InnerContainer = styled.div`
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
 `
 const InputAndLabel = styled.div`
     display: flex;
@@ -102,26 +89,33 @@ const InputAndLabel = styled.div`
     align-items: center;
     gap: 8px;
 `
-const Button = styled.button`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-    background-color: transparent;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 12px;
-    cursor: auto;
-    
-    span {
-        font-weight: bold;
-    }
-`
-const ColumnContainer = styled.div`
+const SvgIconContainer = styled.div`
     display: flex;
     align-items: center;
     flex-direction: column;
     gap: 16px;
+`
+const ActionButtons = styled.div`
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+`
+const Button = styled.button`
+    height: 40px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    border-radius: 8px;
+    white-space: nowrap;
+    background-color: white;
+
+    ${props => props.primary && css`
+        background: black;
+        color: white;
+    `}
 `
 
 

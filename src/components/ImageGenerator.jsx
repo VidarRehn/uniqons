@@ -1,15 +1,12 @@
 import styled, {css} from "styled-components"
 import axios from "axios"
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import AppContext from '../context/AppContext'
-import { useEffect, useState } from "react"
-import { Potrace } from "potrace"
 import { apiKey } from "../config/openAi"
 import Icon from './Icon'
 import CodeContainer from "./CodeContainer"
 import Pen from "../assets/Pen"
-import TracePen from "../assets/TracePen"
-import StackedImages from "../assets/StackedImages"
+import GeneratedImages from "./GeneratedImages"
 
 const ImageGenerator = () => {
     
@@ -18,39 +15,8 @@ const ImageGenerator = () => {
     const [imageUrl, setImageUrl] = useState();
     const [svgCreated, setSvgCreated] = useState(false)
     const [error, setError] = useState()
-    const [chosenImage, setChosenImage] = useState()
     const [codeString, setCodeString] = useState()
     const [amendedCodeString, setAmendedCodeString] = useState()
-    let svg
-
-    const trace = new Potrace()
-
-    useEffect(() => {
-        if (chosenImage) {
-            trace.loadImage(chosenImage, () => {
-                svg = trace.getSVG()
-                setCodeString(svg)
-                setSvgCreated(true)
-            })
-        }        
-    }, [imageUrl])
-
-    // useEffect(() => {
-    //     if (codeString) {
-    //         let array = codeString.split(' ')
-    //         let fill = array.map(string => {
-    //             if (string.includes('fill') && string.includes('black')){
-    //                 return 'fill={color}'
-    //             } else if (string.includes('width')) {
-    //                 return ''
-    //             } else if (string.includes('height')) {
-    //                 return 'height={size}'
-    //             } else return string
-    //         })
-    //         let amendedString = fill.join(' ')
-    //         setAmendedCodeString(amendedString)
-    //     }
-    // }, [codeString])
 
     const generateImage = async (e) => {
         e.preventDefault()
@@ -83,47 +49,6 @@ const ImageGenerator = () => {
         e.target.reset()
     }
 
-    const traceSvg = async (image) => {
-        trace.loadImage(image, () => {
-            svg = trace.getSVG()
-            setCodeString(svg)
-            setSvgCreated(true)
-        })
-    }
-
-    const getVariations = async (e) => {
-        e.preventDefault()
-
-        let response = await fetch(chosenImage)
-        let blob = await response.blob()
-        let file = new File([blob], 'image.png')
-
-        setError(null)
-        setSvgCreated(false)
-        setLoader(true)
-
-        const data = {
-            model: 'image-alpha-001',
-            image: file,
-            n: 4,
-            size: '256x256',
-            response_format: 'url',
-        }
-        const headers = {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${apiKey}`
-        };
-        await axios.post('https://api.openai.com/v1/images/variations', data, { headers: headers })
-        .then(res => {
-            setImageUrl(res.data.data)
-        })
-        .catch(err => {
-            setError(err.response.data.error.message)
-        })
-        setLoader(false)
-
-    }
-
     return (
         <Container>
             <Form onSubmit={(e) => generateImage(e)}>
@@ -135,49 +60,27 @@ const ImageGenerator = () => {
                 </DrawButton>
             </Form>
 
-            {imageUrl && (
-            <>    
-            <ImagesContainer>
-            {imageUrl && imageUrl.map((img, i) => (
-                <ImageAndCheckbox htmlFor={`image-${i}`} key={i}>
-                    <img src={img.url} />
-                    <input id={`image-${i}`} type="radio" name="chosen-image" onChange={(e) => setChosenImage(e.target.previousSibling.src)} />
-                </ImageAndCheckbox>
-            ))}
-            </ImagesContainer>
-
-            {error && <p>{error}</p>}
-
-            <ActionsContainer>
-                <p>Click on an image above that you like then:</p>
-                <Button primary disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>
-                    <TracePen size={18} color={'white'} />
-                    <span>Trace SVG</span>
-                </Button>
-                <Button disabled={!chosenImage} onClick={(e) => getVariations(e)}>
-                    <StackedImages size={24} color={'black'} />
-                    <span>Get variations</span>
-                </Button>
-            </ActionsContainer>
-            </>
+            {imageUrl && (  
+            <GeneratedImages 
+                imagesArray={imageUrl}
+                error={error}
+                setError={setError}
+                setCodeString={setCodeString}
+                setSvgCreated={setSvgCreated}
+                setImageUrl={setImageUrl}
+            />
             )}
 
             {svgCreated && (
             <Icon code={codeString} prompt={inputPrompt}/>
             )}
 
-            {/* {svgCreated && (
-            <div>
-                <CodeContainer code={codeString} />
-            </div>
-            )} */}
-
         </Container>
     )
 }
 
 const Container = styled.main`
-    width: 528px;
+    width: 560px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -220,50 +123,4 @@ const DrawButton = styled.button`
         transform: rotate(45deg);
     }
 `
-const ImagesContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 16px;
-`
-const ImageAndCheckbox = styled.label`
-    height: 120px;
-    width: 120px;
-    position: relative;
-
-    img {
-        height: 100%;
-        width: 100%;
-    }
-
-    input {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        right: 16px;
-        top: 16px;
-    }
-`
-const ActionsContainer = styled.div`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-`
-const Button = styled.button`
-    height: 40px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    border-radius: 8px;
-    white-space: nowrap;
-    background-color: transparent;
-
-    ${props => props.primary && css`
-        background: black;
-        color: white;
-    `}
-`
-
 export default ImageGenerator
