@@ -6,7 +6,7 @@ const Header = () => {
     return (
         <div>
         <Title>uniqons</Title>
-        <Subtitle>create unique SVG-icons with DALL-E for your website</Subtitle>
+        <Subtitle>create unique AI generated SVG-icons for your website</Subtitle>
         </div>
     )
 }
@@ -20,7 +20,8 @@ const Subtitle = styled.p`
     font-size: 16px;
     text-align: center;
     margin-top: 8px;
-    color: #595959;
+    color: #7b7b7b;
+    font-weight: bold;
 `
 
 export default Header

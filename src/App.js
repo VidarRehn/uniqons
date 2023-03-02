@@ -9,9 +9,19 @@ import { useState } from 'react';
 function App() {
 
   const [loader, setLoader] = useState(false)
+  const [error, setError] = useState()
+  const [initialSvgString, setInitialSvgString] = useState()
+  const [reactString, setReactString] = useState()
 
   return (
-    <AppContext.Provider  value={{ loader, setLoader }}>
+    <AppContext.Provider 
+      value={{ 
+        loader, setLoader, 
+        error, setError,
+        initialSvgString, setInitialSvgString,
+        reactString, setReactString, 
+      }}>
+        
       <Loader />
       <Container>
         <Header />

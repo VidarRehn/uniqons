@@ -10,12 +10,10 @@ import { colors } from "../styles/partials"
 
 const ImageGenerator = () => {
     
-    const {setLoader} = useContext(AppContext)
+    const {setLoader, error, setError, initialSvgString} = useContext(AppContext)
     const [inputPrompt, setInputPrompt] = useState()
     const [imageUrl, setImageUrl] = useState();
     const [svgCreated, setSvgCreated] = useState(false)
-    const [error, setError] = useState()
-    const [codeString, setCodeString] = useState()
 
     const generateImage = async (e) => {
         e.preventDefault()
@@ -59,19 +57,17 @@ const ImageGenerator = () => {
                 </DrawButton>
             </Form>
 
+            {error && <p>{error}</p>}
+
             {imageUrl && (  
             <GeneratedImages 
                 imagesArray={imageUrl}
-                error={error}
-                setError={setError}
-                setCodeString={setCodeString}
-                setSvgCreated={setSvgCreated}
                 setImageUrl={setImageUrl}
             />
             )}
 
-            {svgCreated && (
-            <Icon code={codeString} prompt={inputPrompt}/>
+            {initialSvgString && (
+            <Icon code={initialSvgString} prompt={inputPrompt}/>
             )}
 
         </Container>

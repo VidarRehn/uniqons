@@ -10,14 +10,10 @@ import { ActionButton, SectionContainer } from '../styles/styled-components'
 
 const GeneratedImages = ({
     imagesArray,
-    error,
-    setError,
-    setCodeString,
-    setSvgCreated,
     setImageUrl
 }) => {
 
-    const {setLoader} = useContext(AppContext)
+    const {error, setError, setLoader, setInitialSvgString} = useContext(AppContext)
     const [chosenImage, setChosenImage] = useState()
     const trace = new Potrace()
     let svg
@@ -25,8 +21,7 @@ const GeneratedImages = ({
     const traceSvg = async (image) => {
         trace.loadImage(image, () => {
             svg = trace.getSVG()
-            setCodeString(svg)
-            setSvgCreated(true)
+            setInitialSvgString(svg)
         })
     }
 
@@ -38,7 +33,7 @@ const GeneratedImages = ({
         let file = new File([blob], 'image.png')
 
         setError(null)
-        setSvgCreated(false)
+        setInitialSvgString(null)
         setLoader(true)
 
         const data = {
@@ -73,9 +68,6 @@ const GeneratedImages = ({
                 </ImageAndCheckbox>
             ))}
             </ImagesContainer>
-
-            {error && <p>{error}</p>}
-
             <ActionsContainer>
                 <p>Click on an image above that you like then:</p>
                 <ActionButton primary disabled={!chosenImage} onClick={() => traceSvg(chosenImage)}>

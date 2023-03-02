@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import AppContext from '../context/AppContext'
 import styled from "styled-components"
 import parse from 'html-react-parser'
 import ClipBoard from "../assets/Clipboard"
@@ -7,6 +8,7 @@ import { ActionButton, SectionContainer } from "../styles/styled-components"
 
 const Icon = ({code, prompt}) => {
 
+    const {reactString, setReactString} = useContext(AppContext)
     const [color, setColor] = useState('black')
     const [componentDidMount, setComponentDidMount] = useState(false)
     const [viewBox, setViewBox] = useState('0 0 256 256')
@@ -36,7 +38,7 @@ const Icon = ({code, prompt}) => {
         },
     }
 
-    const copyToClipboard = () => {
+    const copySvg = () => {
         let element = document.querySelector('.generated-icon').innerHTML
         navigator.clipboard.writeText(element)
     }
@@ -62,7 +64,8 @@ const Icon = ({code, prompt}) => {
         amendedArray.unshift(openingSeq)
         amendedArray.push(endSeq)
         let newCodeString = amendedArray.join(' ')
-        navigator.clipboard.writeText(newCodeString)
+        setReactString(newCodeString)
+        navigator.clipboard.writeText(reactString)
     }
 
     return (
@@ -76,7 +79,7 @@ const Icon = ({code, prompt}) => {
                     </InputAndLabel>
                 </SvgIconContainer>
                 <ActionButtons>
-                    <ActionButton primary onClick={() => {copyToClipboard()}}>
+                    <ActionButton primary onClick={() => {copySvg()}}>
                         <ClipBoard size={18} />
                         <span>Copy SVG</span>
                     </ActionButton>
