@@ -6,7 +6,7 @@ const Header = () => {
     return (
         <div>
         <Title>uniqons</Title>
-        <Subtitle>create unique AI generated SVG-icons for your website</Subtitle>
+        <Subtitle>create unique AI generated icons for your website</Subtitle>
         </div>
     )
 }

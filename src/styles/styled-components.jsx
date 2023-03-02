@@ -15,6 +15,10 @@ export const ActionButton = styled.button`
     color: ${colors.mainAction};
     border: 3px solid ${colors.mainAction};
 
+    &:hover {
+        background-color: ${colors.lightGrey};
+    }
+
     svg {
         fill: ${colors.mainAction}
     }
@@ -22,6 +26,11 @@ export const ActionButton = styled.button`
     ${props => props.primary && css`
         background: ${colors.mainAction};
         color: white;
+
+        &:hover {
+            background-color: ${colors.mainActionHover};
+            border-color: ${colors.mainActionHover};
+        }
 
         svg {
             fill: white;

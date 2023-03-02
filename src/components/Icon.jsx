@@ -81,61 +81,49 @@ const Icon = ({code, prompt}) => {
 
     return (
         <SectionContainer>
-            <InnerContainer>
-                <SvgIconContainer>
+            <SvgIconContainer>
+                <label title="Click me to change color" htmlFor="color-input">
                     <div className="generated-icon">{parse(code, attributeOptions)}</div>
-                    <InputAndLabel>
-                        <label htmlFor="color-input">See in another color</label>
-                        <input onChange={(e) => setColor(e.target.value)} type="color" id="color-input" />
-                    </InputAndLabel>
-                </SvgIconContainer>
-                <ActionButtons>
-                    <ActionButton primary onClick={() => {copySvg()}}>
-                        <ClipBoard size={18} />
-                        <span>Copy SVG</span>
-                        {svgCopied && (
-                            <Copied>
-                                <CheckmarkIcon size={12} />
-                                <span>copied</span>
-                            </Copied>
-                        )}
-                    </ActionButton>
-                    <ActionButton onClick={() => copyReactComponent()}>
-                        <ReactIcon size={18} />
-                        <span>Copy React component</span>
-                        {reactCopied && (
-                            <Copied>
-                                <CheckmarkIcon size={12} />
-                                <span>copied</span>
-                            </Copied>
-                        )}
-                    </ActionButton>
-                </ActionButtons>
-            </InnerContainer>
+                    <input onChange={(e) => setColor(e.target.value)} type="color" id="color-input" />
+                </label>
+            </SvgIconContainer>
+            <ActionButtons>
+                <ActionButton primary onClick={() => {copySvg()}}>
+                    <ClipBoard size={18} />
+                    <span>Copy SVG</span>
+                    {svgCopied && (
+                        <Copied>
+                            <CheckmarkIcon size={12} />
+                            <span>copied</span>
+                        </Copied>
+                    )}
+                </ActionButton>
+                <ActionButton onClick={() => copyReactComponent()}>
+                    <ReactIcon size={18} />
+                    <span>Copy React component with size and color props</span>
+                    {reactCopied && (
+                        <Copied>
+                            <CheckmarkIcon size={12} />
+                            <span>copied</span>
+                        </Copied>
+                    )}
+                </ActionButton>
+            </ActionButtons>
         </SectionContainer>
     )
 }
 
-const InnerContainer = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-`
-const InputAndLabel = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-`
 const SvgIconContainer = styled.div`
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 16px;
+    
+    label {
+        cursor: pointer;
+    }
+
+    input {
+        display: none;
+    }
 `
 const ActionButtons = styled.div`
-    align-self: flex-end;
     display: flex;
     align-items: center;
     gap: 16px;

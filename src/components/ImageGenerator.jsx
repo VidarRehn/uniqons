@@ -1,4 +1,4 @@
-import styled, {css} from "styled-components"
+import styled from "styled-components"
 import axios from "axios"
 import { useContext, useState } from 'react'
 import AppContext from '../context/AppContext'
@@ -112,6 +112,11 @@ const DrawButton = styled.button`
     color: white;
     background-color: ${colors.mainAction};
     border-radius: 0px 8px 8px 0px;
+
+    &:hover {
+        background-color: ${colors.mainActionHover};
+        border-color: ${colors.mainActionHover};
+    }
 
     svg {
         transform: rotate(45deg);
