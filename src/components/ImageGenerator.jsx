@@ -10,16 +10,15 @@ import { colors } from "../styles/partials"
 
 const ImageGenerator = () => {
     
-    const {setLoader, error, setError, initialSvgString} = useContext(AppContext)
+    const {setLoader, error, setError, initialSvgString, setInitialSvgString} = useContext(AppContext)
     const [inputPrompt, setInputPrompt] = useState()
     const [imageUrl, setImageUrl] = useState();
-    const [svgCreated, setSvgCreated] = useState(false)
 
     const generateImage = async (e) => {
         e.preventDefault()
         setError(null)
         setImageUrl(null)
-        setSvgCreated(false)
+        setInitialSvgString(false)
         setLoader(true)
 
         let prompt = `single icon of ${inputPrompt} in black on white background`

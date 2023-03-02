@@ -4,13 +4,16 @@ import { docco, vs, github, tomorrowNight } from "react-syntax-highlighter/dist/
 const CodeContainer = ({code}) => {
 
     return (
-        <SyntaxHighlighter 
-            children={code}
-            language="javascript" 
-            showLineNumbers
-            style={tomorrowNight}
-            wrapLines
-        />
+        <div>
+            <SyntaxHighlighter 
+                children={code}
+                language="javascript" 
+                showLineNumbers
+                style={tomorrowNight}
+                wrapLines={true}
+                wrapLongLines={true}
+            />
+        </div>
     )
 }
 

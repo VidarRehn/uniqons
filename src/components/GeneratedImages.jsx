@@ -13,7 +13,7 @@ const GeneratedImages = ({
     setImageUrl
 }) => {
 
-    const {error, setError, setLoader, setInitialSvgString} = useContext(AppContext)
+    const {setError, setLoader, setInitialSvgString, setReactString} = useContext(AppContext)
     const [chosenImage, setChosenImage] = useState()
     const trace = new Potrace()
     let svg
@@ -33,6 +33,7 @@ const GeneratedImages = ({
         let file = new File([blob], 'image.png')
 
         setError(null)
+        setReactString(null)
         setInitialSvgString(null)
         setLoader(true)
 

@@ -4,14 +4,17 @@ import styled from "styled-components"
 import parse from 'html-react-parser'
 import ClipBoard from "../assets/Clipboard"
 import ReactIcon from "../assets/ReactIcon"
-import { ActionButton, SectionContainer } from "../styles/styled-components"
+import CheckmarkIcon from '../assets/Checkmark'
+import { ActionButton, SectionContainer, Copied } from "../styles/styled-components"
 
 const Icon = ({code, prompt}) => {
 
-    const {reactString, setReactString} = useContext(AppContext)
+    const {setReactString} = useContext(AppContext)
     const [color, setColor] = useState('black')
     const [componentDidMount, setComponentDidMount] = useState(false)
     const [viewBox, setViewBox] = useState('0 0 256 256')
+    const [svgCopied, setSvgCopied] = useState(false)
+    const [reactCopied, setReactCopied] = useState(false)
 
     useEffect(() => {
         setComponentDidMount(true)
@@ -20,8 +23,8 @@ const Icon = ({code, prompt}) => {
     useEffect(() => {
         if (componentDidMount){
             let svg = document.querySelector('.generated-icon').firstChild
-            var bbox = svg.getBBox();
-            var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+            let bbox = svg.getBBox();
+            let viewBox = [bbox.x.toFixed(), bbox.y.toFixed(), bbox.width.toFixed(), bbox.height.toFixed()].join(" ");
             setViewBox(viewBox)
         }
     })
@@ -41,13 +44,17 @@ const Icon = ({code, prompt}) => {
     const copySvg = () => {
         let element = document.querySelector('.generated-icon').innerHTML
         navigator.clipboard.writeText(element)
+        setSvgCopied(true)
+        setTimeout(() => { 
+            setSvgCopied(false)
+        }, 1000);
     }
 
     const copyReactComponent = () => {
         const element = document.querySelector('.generated-icon').innerHTML
         let arrayElement = element.split(' ')
-        const openingSeq = `const ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon = ({size,color}) =>\n{ return (`
-        const endSeq = `)\n}\n export default ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon`
+        const openingSeq = `const ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon = ( {size,color} ) => {\nreturn (\n`
+        const endSeq = `\n)\n}\n export default ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}Icon`
         let amendedArray = arrayElement.map(string => {
             if (string.includes('xmlns')){
                 return ''
@@ -65,7 +72,11 @@ const Icon = ({code, prompt}) => {
         amendedArray.push(endSeq)
         let newCodeString = amendedArray.join(' ')
         setReactString(newCodeString)
-        navigator.clipboard.writeText(reactString)
+        navigator.clipboard.writeText(newCodeString)
+        setReactCopied(true)
+        setTimeout(() => { 
+            setReactCopied(false)
+        }, 1000);
     }
 
     return (
@@ -82,10 +93,22 @@ const Icon = ({code, prompt}) => {
                     <ActionButton primary onClick={() => {copySvg()}}>
                         <ClipBoard size={18} />
                         <span>Copy SVG</span>
+                        {svgCopied && (
+                            <Copied>
+                                <CheckmarkIcon size={12} />
+                                <span>copied</span>
+                            </Copied>
+                        )}
                     </ActionButton>
                     <ActionButton onClick={() => copyReactComponent()}>
                         <ReactIcon size={18} />
                         <span>Copy React component</span>
+                        {reactCopied && (
+                            <Copied>
+                                <CheckmarkIcon size={12} />
+                                <span>copied</span>
+                            </Copied>
+                        )}
                     </ActionButton>
                 </ActionButtons>
             </InnerContainer>
